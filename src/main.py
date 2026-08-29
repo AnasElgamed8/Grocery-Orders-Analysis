@@ -1,0 +1,38 @@
+from pathlib import Path
+import pandas as pd
+from matplotlib import pyplot as plt
+
+
+class GroceryData:
+    def __init__(self):
+        # Get the current dir, then go to the project root
+        self._base_dir = Path(__file__).resolve().parent.parent
+        self._data_dir = self._base_dir / "data"
+
+        # Create a dict of dataframes, one for each file
+        data_dict = {
+            file.stem: pd.read_csv(file) for file in self._data_dir.glob("*.csv")
+        }
+
+        self.cleaning(data_dict)
+
+    def cleaning(self, data_dict):
+        # Merge train and prior (I don't even know what was the point of splitting them)
+        df = pd.concat(
+            [data_dict["order_products__prior"], data_dict["order_products__train"]],
+            ignore_index=True,
+        )
+
+        # Orders dataframe cleaning
+        orders = data_dict["orders"].copy()
+        # eval_set isn't needed
+        orders = orders.drop(columns=["eval_set"])
+        # first order = -1 instead of nan
+        orders["days_since_prior_order"] = orders["days_since_prior_order"].fillna(-1)
+
+        # merging
+        df = pd.merge(df, orders, how="left", on="order_id")
+        df = pd.merge(df, data_dict["products"], how="left", on="product_id")
+        df = pd.merge(df, data_dict["aisles"], how="left", on="aisle_id")
+        df = pd.merge(df, data_dict["departments"], how="left", on="department_id")
+        self.df = df.copy()
