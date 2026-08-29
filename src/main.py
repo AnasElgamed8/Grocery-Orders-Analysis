@@ -8,12 +8,13 @@ class GroceryData:
         # Get the current dir, then go to the project root
         self._base_dir = Path(__file__).resolve().parent.parent
         self._data_dir = self._base_dir / "data"
-
+        # Cached dataframe check
         try:
-            self.df = pd.read_csv(self._data_dir / "merged.csv")
+            self.df = pd.read_pickle(self._data_dir / "merged.pkl")
+            print("Cached dataset found, using that")
 
         except FileNotFoundError:
-            print("Couldn't find the merged dataset, starting from scratch")
+            print("Couldn't find the cached dataset, starting from scratch")
             # Create a dict of dataframes, one for each file
             data_dict = {
                 file.stem: pd.read_csv(file) for file in self._data_dir.glob("*.csv")
@@ -44,7 +45,8 @@ class GroceryData:
         self.df = df.copy()
 
     def export(self):
-        self.df.to_csv(self._data_dir / "merged.csv", index=False)
+        # cache a version of the merged dataframe
+        self.df.to_pickle(self._data_dir / "merged.pkl")
 
 
 if __name__ == "__main__":
