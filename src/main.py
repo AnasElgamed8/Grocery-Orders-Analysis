@@ -9,12 +9,18 @@ class GroceryData:
         self._base_dir = Path(__file__).resolve().parent.parent
         self._data_dir = self._base_dir / "data"
 
-        # Create a dict of dataframes, one for each file
-        data_dict = {
-            file.stem: pd.read_csv(file) for file in self._data_dir.glob("*.csv")
-        }
+        try:
+            self.df = pd.read_csv(self._data_dir / "merged.csv")
 
-        self.cleaning(data_dict)
+        except FileNotFoundError:
+            print("Couldn't find the merged dataset, starting from scratch")
+            # Create a dict of dataframes, one for each file
+            data_dict = {
+                file.stem: pd.read_csv(file) for file in self._data_dir.glob("*.csv")
+            }
+
+            self.cleaning(data_dict)
+            self.export()
 
     def cleaning(self, data_dict):
         # Merge train and prior (I don't even know what was the point of splitting them)
@@ -36,3 +42,13 @@ class GroceryData:
         df = pd.merge(df, data_dict["aisles"], how="left", on="aisle_id")
         df = pd.merge(df, data_dict["departments"], how="left", on="department_id")
         self.df = df.copy()
+
+    def export(self):
+        self.df.to_csv(self._data_dir / "merged.csv", index=False)
+
+
+if __name__ == "__main__":
+    data = GroceryData()
+    df = data.df
+    print(df.head(), df.columns, df.shape, sep="\n")
+    df.info()
