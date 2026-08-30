@@ -52,5 +52,14 @@ class GroceryData:
 if __name__ == "__main__":
     data = GroceryData()
     df = data.df
-    print(df.head(), df.columns, df.shape, sep="\n")
-    df.info()
+    top_products = df["product_name"].value_counts()
+    plt.figure(figsize=(12, 5))
+    plt.plot(top_products)
+    plt.title("Top ordered products", fontsize=16)
+    plt.xlabel("Product Name", fontsize=13)
+    plt.ylabel("Number of Orders", fontsize=13)
+    plt.xticks(fontsize=11)
+    plt.yticks(fontsize=11)
+    plt.grid(True)
+    plt.legend()
+    plt.show()
