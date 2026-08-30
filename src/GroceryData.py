@@ -1,6 +1,5 @@
 from pathlib import Path
 import pandas as pd
-from matplotlib import pyplot as plt
 
 
 class GroceryData:
@@ -26,7 +25,10 @@ class GroceryData:
     def cleaning(self, data_dict):
         # Merge train and prior (I don't even know what was the point of splitting them)
         df = pd.concat(
-            [data_dict["order_products__prior"], data_dict["order_products__train"]],
+            [
+                data_dict["order_products__prior"],
+                data_dict["order_products__train"],
+            ],
             ignore_index=True,
         )
 
@@ -47,19 +49,3 @@ class GroceryData:
     def export(self):
         # cache a version of the merged dataframe
         self.df.to_pickle(self._data_dir / "merged.pkl")
-
-
-if __name__ == "__main__":
-    data = GroceryData()
-    df = data.df
-    top_products = df["product_name"].value_counts()
-    plt.figure(figsize=(12, 5))
-    plt.plot(top_products)
-    plt.title("Top ordered products", fontsize=16)
-    plt.xlabel("Product Name", fontsize=13)
-    plt.ylabel("Number of Orders", fontsize=13)
-    plt.xticks(fontsize=11)
-    plt.yticks(fontsize=11)
-    plt.grid(True)
-    plt.legend()
-    plt.show()
