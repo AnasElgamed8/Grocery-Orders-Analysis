@@ -322,16 +322,38 @@ def _(orders_by_aisle, plt):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    8. Reorder rate by Department
+    8. Reorder rate
     """)
     return
 
 
 @app.cell
 def _(df):
-    reorder_dept = df.groupby("department")["reordered"].mean().sort_values(ascending=False)
+    valid_reorder = df[df["order_number"] > 1]
+    return (valid_reorder,)
 
 
+@app.cell
+def _(valid_reorder):
+    valid_reorder["reordered"].mean()
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    8. Reorder rate by Department
+    """)
+    return
+
+
+@app.cell
+def _(valid_reorder):
+    reorder_dept = (
+        valid_reorder.groupby("department")["reordered"]
+        .mean()
+        .sort_values(ascending=False)
+    )
     return (reorder_dept,)
 
 
@@ -345,9 +367,6 @@ def _(plt, reorder_dept):
     plt.grid()
     plt.tight_layout()
     plt.show()
-
-
-
     return
 
 
@@ -360,8 +379,13 @@ def _(mo):
 
 
 @app.cell
-def _(df):
-    reorder_aisle = df.groupby("aisle")["reordered"].mean().sort_values(ascending=False).head(20)
+def _(valid_reorder):
+    reorder_aisle = (
+        valid_reorder.groupby("aisle")["reordered"]
+        .mean()
+        .sort_values(ascending=False)
+        .head(20)
+    )
     return (reorder_aisle,)
 
 
@@ -387,23 +411,48 @@ def _(mo):
 
 
 @app.cell
-def _(df):
+def _(valid_reorder):
     # We cap the cart size at 30 items for the chart so outliers (like a 100-item cart) don't ruin the plot
-    cart_reorder = df[df["add_to_cart_order"] <= 30].groupby("add_to_cart_order")["reordered"].mean()
-
+    cart_reorder = (
+        valid_reorder[valid_reorder["add_to_cart_order"] <= 30]
+        .groupby("add_to_cart_order")["reordered"]
+        .mean()
+    )
     return (cart_reorder,)
 
 
 @app.cell
 def _(cart_reorder, plt):
     # Using a line plot here because it shows the trend of probability dropping as items are added later
-    plt.plot(cart_reorder.index, cart_reorder.values, marker='o')
+    plt.plot(cart_reorder.index, cart_reorder.values, marker="o")
     plt.title("Does Cart Position Affect Reordering?")
     plt.xlabel("Position in Cart (1st, 2nd, 3rd...)")
     plt.ylabel("Reorder Probability")
     plt.grid()
     plt.tight_layout()
     plt.show()
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    11. Average delay between each order
+    """)
+    return
+
+
+@app.cell
+def _(df):
+    unique_orders = df.drop_duplicates(subset=["order_id"])
+
+    time_since_last_order = unique_orders[unique_orders["days_since_prior_order"] > -1]
+    return (time_since_last_order,)
+
+
+@app.cell
+def _(time_since_last_order):
+    print(time_since_last_order["days_since_prior_order"].mean())
     return
 
 
