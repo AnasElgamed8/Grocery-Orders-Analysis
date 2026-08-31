@@ -42,9 +42,7 @@ def _(plt):
             "grid.alpha": 0.7,
             "grid.linestyle": "--",
             # Colors
-            "axes.prop_cycle": plt.cycler(
-                color=["#2563eb", "#16a34a", "#d97706", "#dc2626"]
-            ),
+            "axes.prop_cycle": plt.cycler(color=["#dc2626"]),
         }
     )
     return
@@ -95,28 +93,6 @@ def _(df, plt):
     return
 
 
-@app.cell
-def _(df, plt):
-    worst_products = (
-        df["product_name"].value_counts().sort_values(ascending=True).head(20)
-    )
-
-    plt.figure()
-    plt.bar(
-        worst_products.index,
-        worst_products.values,
-    )
-    plt.title("worst 20 Ordered Products")
-    plt.xlabel("Product Name")
-    plt.ylabel("Number of Orders")
-    plt.xticks(rotation=30, ha="right")
-    plt.yticks()
-    plt.grid()
-    plt.tight_layout()
-    plt.show()
-    return
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -139,7 +115,7 @@ def _(mo):
     * We have a total of 206209 Users
     * The minimum amout of orders for a user was 3
     * The maximum amount of orders was 100 orders
-    * With am average of 16 orders per user
+    * With an average of 16 orders per user
     """)
     return
 
@@ -157,7 +133,7 @@ def _(df, pd):
     days = [
         "Sunday",
         "Monday",
-        "Tuseday",
+        "Tuesday",
         "Wednesday",
         "Thursday",
         "Friday",
@@ -181,7 +157,7 @@ def _(plt, total_orders_day):
     plt.title("Total number of orders per day")
     plt.xlabel("Day")
     plt.ylabel("Number of Orders")
-    plt.xticks(rotation=30, ha="right")
+    plt.xticks()
     plt.yticks()
     plt.grid()
     plt.tight_layout()
@@ -250,8 +226,12 @@ def _(df, pd):
 
 
 @app.cell
-def _(days, hours, order_day_hour, sns):
-    sns.heatmap(order_day_hour, yticklabels=days, xticklabels=hours)
+def _(days, hours, order_day_hour, plt, sns):
+    sns.heatmap(order_day_hour, center=0, yticklabels=days, xticklabels=hours)
+    plt.title("Hour to day relationship")
+    plt.xlabel("Hour")
+    plt.ylabel("Day")
+    plt.show()
     return
 
 
@@ -445,14 +425,120 @@ def _(mo):
 @app.cell
 def _(df):
     unique_orders = df.drop_duplicates(subset=["order_id"])
-
-    time_since_last_order = unique_orders[unique_orders["days_since_prior_order"] > -1]
+    time_since_last_order = unique_orders[
+        unique_orders["days_since_prior_order"] > -1
+    ]
     return (time_since_last_order,)
 
 
 @app.cell
 def _(time_since_last_order):
     print(time_since_last_order["days_since_prior_order"].mean())
+    return
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell
+def _(df, pd, time_since_last_order):
+    basket_size = df.groupby("order_id").size().reset_index(name="basket_size")
+    orders_with_basket = time_since_last_order.merge(
+        basket_size, on="order_id"
+    )
+    bins = [-1, 7, 14, 21, 30]
+    labels = ["0-7d", "8-14d", "15-21d", "22-30d"]
+    orders_with_basket["cadence_bucket"] = pd.cut(
+        orders_with_basket["days_since_prior_order"], bins=bins, labels=labels
+    )
+    # 4. compare
+    cadence_basket = orders_with_basket.groupby("cadence_bucket")[
+        "basket_size"
+    ].mean()
+    return (cadence_basket,)
+
+
+@app.cell
+def _(cadence_basket, plt, sns):
+    sns.barplot(x=cadence_basket.index, y=cadence_basket.values)
+    plt.title("Average Cart Position by Department")
+    plt.xlabel("Department")
+    plt.ylabel("Avg. Add-to-Cart Position")
+    plt.xticks(rotation=45, ha="right")
+    plt.grid()
+    plt.tight_layout()
+    plt.show()
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    12. Time realtionship to departments
+    """)
+    return
+
+
+@app.cell
+def _(df, pd):
+    department_hour = pd.crosstab(
+        df["department"],
+        df["order_hour_of_day"],
+        values=df["order_id"],
+        aggfunc="nunique",
+    )
+    return (department_hour,)
+
+
+@app.cell
+def _(department_hour, hours, plt, sns):
+    sns.heatmap(department_hour, center=0, xticklabels=hours)
+    plt.title("Hour to department relationship")
+    plt.xlabel("Hour")
+    plt.ylabel("Department")
+    plt.show()
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Cart Position relationship to department
+    """)
+    return
+
+
+@app.cell
+def _(df):
+    department_position = (
+        df.groupby("department")["add_to_cart_order"]
+        .mean()
+        .sort_values(ascending=False)
+    )
+    department_position
+    return
+
+
+app._unparsable_cell(
+    r"""
+    sns.barplot(x=department_position.index, y=department_position.values)t
+    plt.title("Average Cart Position by Department")
+    plt.xlabel("Department")
+    plt.ylabel("Avg. Add-to-Cart Position")
+    plt.xticks(rotation=45, ha="right")
+    plt.grid()
+    plt.tight_layout()
+    plt.show()
+    """,
+    name="_"
+)
+
+
+@app.cell
+def _():
+    #basket_affinity = pd.merge(df, df["order_products"], on=order_id)
     return
 
 
