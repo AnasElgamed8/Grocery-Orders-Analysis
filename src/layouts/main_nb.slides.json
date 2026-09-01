@@ -5,17 +5,54 @@
       {},
       {},
       {},
+      {},
+      {
+        "type": "fragment"
+      },
+      {
+        "type": "skip",
+        "showCode": false
+      },
+      {},
       {
         "type": "fragment",
         "showCode": false
       },
       {
-        "type": "sub-slide"
+        "showCode": false,
+        "type": "skip"
+      },
+      {},
+      {},
+      {
+        "type": "slide"
       },
       {
         "showCode": false
       },
       {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "type": "skip"
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
       {
         "showCode": false
       },
@@ -44,23 +81,26 @@
       {},
       {},
       {},
+      {
+        "type": "skip"
+      },
+      {},
+      {
+        "type": "skip"
+      },
       {},
       {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
+      {
+        "type": "slide"
+      },
       {},
       {},
       {},
       {}
     ],
-    "deck": {}
+    "deck": {
+      "transition": "convex",
+      "verticalAlign": "center"
+    }
   }
 }
