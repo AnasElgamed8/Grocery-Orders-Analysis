@@ -59,6 +59,24 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    # Case Overview
+
+    Given Instacart's order data (~3.4M orders, ~50k products), I wanted to
+    understand the shape of customer behavior: what gets bought, when, and
+    what makes people come back for the same items.
+
+    Questions I started with:
+    - When do different categories get ordered?
+    - How loyal are customers to specific products/categories?
+    - Does cart position say anything about an item?
+    - Does how often someone shops affect how much they buy per trip?
+    """)
+    return
+
+
 @app.cell
 def _(mo):
     mo.md(r"""
@@ -228,10 +246,7 @@ def _(mo):
 @app.cell
 def _(df):
     orders_by_aisle = (
-        df.groupby("aisle")["order_id"]
-        .nunique()
-        .sort_values(ascending=False)
-        .head(20)
+        df.groupby("aisle")["order_id"].nunique().sort_values(ascending=False).head(20)
     )
     return (orders_by_aisle,)
 
@@ -652,9 +667,7 @@ def _(mo):
 @app.cell
 def _(df):
     unique_orders = df.drop_duplicates(subset=["order_id"])
-    time_since_last_order = unique_orders[
-        unique_orders["days_since_prior_order"] > -1
-    ]
+    time_since_last_order = unique_orders[unique_orders["days_since_prior_order"] > -1]
     return (time_since_last_order,)
 
 
@@ -681,18 +694,14 @@ def _(df, pd, time_since_last_order):
         .size()
         .reset_index(name="basket_size")
     )
-    orders_with_basket = time_since_last_order.merge(
-        basket_size, on="order_id"
-    )
+    orders_with_basket = time_since_last_order.merge(basket_size, on="order_id")
     bins = [-1, 7, 14, 21, 30]
     labels = ["0-7d", "8-14d", "15-21d", "22-30d"]
     orders_with_basket["cadence_bucket"] = pd.cut(
         orders_with_basket["days_since_prior_order"], bins=bins, labels=labels
     )
     # 4. compare
-    cadence_basket = orders_with_basket.groupby("cadence_bucket")[
-        "basket_size"
-    ].mean()
+    cadence_basket = orders_with_basket.groupby("cadence_bucket")["basket_size"].mean()
     cadence_basket
     return (cadence_basket,)
 
