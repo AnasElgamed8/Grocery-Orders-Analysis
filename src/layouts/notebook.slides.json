@@ -1,0 +1,111 @@
+{
+  "type": "slides",
+  "data": {
+    "cells": [
+      {},
+      {},
+      {},
+      {
+        "type": "slide"
+      },
+      {
+        "type": "skip",
+        "showCode": false
+      },
+      {},
+      {
+        "type": "skip"
+      },
+      {
+        "type": "slide",
+        "showCode": false
+      },
+      {
+        "showCode": false,
+        "type": "skip"
+      },
+      {},
+      {},
+      {
+        "type": "slide"
+      },
+      {
+        "showCode": false
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "type": "skip"
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "showCode": false
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "type": "skip"
+      },
+      {
+        "type": "skip"
+      },
+      {
+        "type": "skip"
+      },
+      {},
+      {},
+      {
+        "type": "slide"
+      },
+      {},
+      {},
+      {},
+      {},
+      {}
+    ],
+    "deck": {
+      "transition": "slide",
+      "verticalAlign": "center"
+    }
+  }
+}
