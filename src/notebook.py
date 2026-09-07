@@ -43,7 +43,9 @@ def _(plt, sns):
             "grid.linestyle": "--",
             # Colors
             # "axes.prop_cycle": plt.cycler(color=["#dc2626"]),
-            "axes.prop_cycle": plt.cycler(color=sns.color_palette("deep", 4)),
+            "axes.prop_cycle": plt.cycler(
+                color=sns.color_palette(palette="RdGy")
+            ),
         }
     )
     return
