@@ -14,6 +14,6 @@ uv sync
 ```
 2. Download and extract the [data](https://drive.google.com/drive/folders/1RaoujBxvuV9JGqYYKax9oxRREtgddB-z?usp=sharing)
 3. Place it in a folder called 'data' in project root.
-4. run `uv run marimo view src/notebook.py`
+4. run `uv run marimo edit src/notebook.py`
 
 Or run the jupyter notebook directly. 
