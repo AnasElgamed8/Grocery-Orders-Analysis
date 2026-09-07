@@ -209,6 +209,11 @@ def _(df):
 
 
 @app.cell
+def _():
+    return
+
+
+@app.cell
 def _(orders_by_department, plt):
     plt.barh(
         orders_by_department.index[::-1],
